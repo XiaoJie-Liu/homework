@@ -8,6 +8,7 @@
 #define  _CRT_SECURE_NO_WARNINGS
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "SCORE.h"
 
@@ -17,12 +18,12 @@
 void readData(SS stu[], int N)
 {
 
-	printf("请按照如下格式输入学生信息：学号,姓名,平时成绩,期末成绩\n");
+	printf("请按照如下格式输入学生信息：学号,姓名,平时成绩,实验成绩，期末成绩\n");
 
 	for (int i = 0; i < N; i++)
 	{
 		printf("第%d个学生:", i + 1);
-		scanf("%s %s %f %f", &stu[i].number, &stu[i].name, &stu[i].dailyScore, &stu[i].finalScore);
+		scanf("%s %s %f %f %f", &stu[i].number, &stu[i].name, &stu[i].dailyScore,&stu[i].experiScore,&stu[i].finalScore);
 		printf("\n");
 	}
 
@@ -68,10 +69,10 @@ SS* readDataFromFile(int *N)
 	{
 
 		//读入文件数据到内存	
-		fscanf(fp, "%s%s%f%f\n", (stu[index].number), (stu[index].name), &stu[index].dailyScore, &stu[index].finalScore);
+		fscanf(fp, "%s %s %f %f %f\n", (stu[index].number), (stu[index].name), &stu[index].dailyScore,&stu[index].experiScore,&stu[index].finalScore);
 
 		//输出排序后的学生信息
-		printf("* 学号：%s	姓名:%s		平时成绩：%4.2f分		期末成绩:%4.2f分\n", (stu[index].number), (stu[index].name), stu[index].dailyScore, stu[index].finalScore);
+		printf("* 学号：%s	         姓名:%s		平时成绩：%4.2f分	    平时成绩:%4.2f分	期末成绩:%4.2f分\n", (stu[index].number), (stu[index].name), stu[index].dailyScore, stu[index].experiScore, stu[index].finalScore);
 
 		index++;
 	}
@@ -136,57 +137,59 @@ void printOut(SS stu[], int N)
 	for (int i = 0; i < N; i++)
 	{
 
-		printf("第%d名信息 学号：%s	姓名:%s		总成绩:%4.2f分\n", i + 1, &(stu[i].number[0]), &(stu[i].name[0]), stu[i].generalScore);
+		printf("第%d名信息 学号：%s	        姓名:%s	     	总成绩:%4.2f分\n", i + 1, &(stu[i].number[0]), &(stu[i].name[0]), stu[i].generalScore);
 	}
 
 	getchar();
 
 }
-//5.查询：输入学号可以查询某个学生的成绩信息
-void search(SS stu[],int N);
+//5.输入学号查询学生成绩
+void cx(SS stu[], int N)
 {
-	printf("\n------第四步：输入学号查询某个学生的成绩信息！-----\n");
-	int i, k = -1;
-	int index = 0;
-	char c[6];
-	printf("输入你要查询的学号：");
-	scanf("%s",c);
-	for (int i = 0; i < N;i++);
-	{
-		if (stu[i].number == c)
-		{
-			printf("该学生的信息为：%s %s %4.2f 分 %4.2f 分 %4.2f 分 \n",(stu[i].number),(stu[i].name),(stu[i].dailyScore),stu[i].experimentalScore,stu[i].finalScore);
-		}
-	}
-}
-//6.统计全班学生成绩的均值和标准方差，并对成绩分布简要分析
-void analysis(SS stu[],int N);
-{
-	float mean;
-	float variance;
+	printf("\n------第四步: 根据学号查询学生成绩!------\n\n");
+	char a[11];
+	printf("请输入要查询的学生学号:\n");
+	scanf("%s",a);
 	for (int i = 0; i < N; i++)
 	{
-		mean += stu[i].generalScore;
+		if (strcmp(a, stu[i].number) == 0)
+			printf("学号：%s         姓名:%s	平时成绩：%4.2f分	实验成绩：%4.2f分   期末成绩:%4.2f分\n", stu[i].number, stu[i].name, stu[i].dailyScore, stu[i].experiScore, stu[i].finalScore);
 	}
-	mean = 1.0*mean / N;
-	for (int i = 0; i < N; i++)
-	{
-		variance += (stu[i].generalScore - mean) * (stu[i].generalScore - mean);
-	}
-	variance = 1.0 * variance / N;
-	if (mean >= 80)
-		printf("全班同学的均值为:%4.4f，  整体水平优秀！\n", mean);
-	else if (mean >= 60)
-		printf("全班同学的均值为:%4.4f，  整体水平比较差！\n", mean);
-	else
-		printf("全班同学的均值为:%4.4f，  整体水平非常差！\n", mean);
 
-	if (variance <= 10)
-		printf("全班同学的方差为:%4.4f， 成绩波动较小。", variance);
-	else if (variance <= 20)
-		printf("全班同学的方差为:%4.4f， 成绩波动有点大。", variance);
-	else
-		printf("全班同学的方差为:%4.4f， 成绩波动非常大。", variance);
-	printf("全班同学的均值为:%4.4f \n 方差为:%4.4f\n", mean, variance);
-	getchar();
+
+}
+//6.分析均值及方差
+void average(SS stu[], int N)
+{
+	printf("\n------第五步:计算全班学生的成绩均值及方差------\n\n");
+	double a1 = 0, b1, c1 = 0, d1,
+		a2 = 0, b2, c2 = 0, d2,
+		a3 = 0, b3, c3 = 0, d3,
+		a4 = 0, b4, c4 = 0, d4;
+	for (int i = 0; i < N; i++)
+	{
+		a1 = a1 + stu[i].dailyScore;
+		a2 = a2 + stu[i].experiScore;
+		a3 = a3 + stu[i].finalScore;
+		a4 = a4 + stu[i].generalScore;
+	}
+	b1 = a1 / N;
+	b2 = a2 / N;
+	b3 = a3 / N;
+	b4 = a4 / N;
+	for (int i = 0; i < N; i++)
+	{
+		c1 = c1 + ((stu[i].dailyScore - b1)*(stu[i].dailyScore - b1));
+		c2 = c2 + ((stu[i].experiScore - b2)*(stu[i].experiScore - b2));
+		c3 = c3 + ((stu[i].finalScore - b3)*(stu[i].finalScore - b3));
+		c4 = c4 + ((stu[i].generalScore - b4)*(stu[i].generalScore - b4));
+	}
+	d1 = c1 / N;
+	d2 = c2 / N;
+	d3 = c3 / N;
+	d4 = c4 / N;
+	printf("全班学生的平均日常成绩是%f，全班学生日常成绩的方差是%f\n全班学生的平均实验成绩是%f，全班学生实验成绩的方差是%f \n全班学生的平均期末成绩是%f，全班学生期末成绩的方差是%f \n全班学生的平均综合成绩是%f，全班学生综合成绩的方差是%f ", b1, d1, b2, d2, b3, d3, b4, d4);
+	printf("对该班级的成绩分布做简要分析：\n");
+	printf("该班级同学期末成绩较高，实验成绩较低；\n");
+	printf("该班级同学的期末成绩分布不稳定差距较大，实验成绩与综合成绩较稳定，日常成绩最为稳定！\n");
 }
